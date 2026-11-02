@@ -1,7 +1,6 @@
-# Multi-stage build for Laravel 11 + Vue 3 (Inertia) on Render.com
 FROM php:8.3-cli-alpine
 
-# Install system dependencies & PHP extensions
+# Install system dependencies & PHP extensions (including PDO SQLite)
 RUN apk add --no-cache \
     bash \
     curl \
@@ -19,33 +18,40 @@ RUN apk add --no-cache \
 # Install Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Set working directory
 WORKDIR /var/www
 
 # Copy all project files
 COPY . .
 
-# Install PHP dependencies
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+# Ensure .env exists for build step
+RUN if [ ! -f .env ]; then cp .env.example .env; fi
 
-# Install frontend dependencies and build assets
+# Install dependencies and build assets
+RUN composer install --no-dev --optimize-autoloader --no-interaction
 RUN npm install && npm run build
 
-# Setup SQLite database and permissions
-RUN mkdir -p database storage bootstrap/cache \
+# Prepare database and write permissions
+RUN mkdir -p database storage/logs storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache \
     && touch database/database.sqlite \
     && chmod -R 777 storage bootstrap/cache database
 
-# Create startup script that handles dynamic $PORT from Render
-RUN echo '#!/bin/bash' > /start.sh \
-    && echo 'php artisan migrate --force' >> /start.sh \
-    && echo 'php artisan config:cache' >> /start.sh \
-    && echo 'php artisan route:cache' >> /start.sh \
-    && echo 'php artisan view:cache' >> /start.sh \
-    && echo 'exec php artisan serve --host=0.0.0.0 --port=${PORT:-10000}' >> /start.sh \
-    && chmod +x /start.sh
+# Self-healing startup script
+RUN printf '%s\n' \
+    '#!/bin/sh' \
+    'cd /var/www' \
+    'if [ ! -f .env ]; then cp .env.example .env; fi' \
+    'if ! grep -q "APP_KEY=base64:" .env; then php artisan key:generate --force; fi' \
+    'mkdir -p database storage/logs storage/framework/sessions storage/framework/views storage/framework/cache bootstrap/cache' \
+    'touch database/database.sqlite' \
+    'chmod -R 777 storage bootstrap/cache database' \
+    'php artisan migrate --force' \
+    'php artisan config:clear' \
+    'php artisan route:clear' \
+    'php artisan view:clear' \
+    'echo "=== Antigravity Laravel Server Started on port ${PORT:-10000} ==="' \
+    'exec php artisan serve --host=0.0.0.0 --port=${PORT:-10000}' \
+    > /start.sh && chmod +x /start.sh
 
-# Render sets PORT dynamically (default 10000)
 EXPOSE 10000
 
 CMD ["/start.sh"]
