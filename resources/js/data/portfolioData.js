@@ -121,7 +121,7 @@ export const photos = [
         camera: 'Canon EOS 60D',
         lens: 'Canon EF 50mm f/1.8 STM',
         settings: '1/250s · f/1.8 · ISO 400',
-        image_url: 'https://images.unsplash.com/photo-1514565131-fce0801e5785?auto=format&fit=crop&w=1200&q=80',
+        image_url: '/images/foto1.webp',
         aspect: 'tall',
         story: 'Momen refleksi lampu jalanan dan hiruk-pikuk pedestrian Jogja di atas aspal basah setelah hujan petang.',
     },
