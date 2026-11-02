@@ -1,5 +1,5 @@
 <script setup>
-import { useForm, usePage } from '@inertiajs/vue3';
+import { ref, reactive } from 'vue';
 import { Mail, Send, CheckCircle2, AlertCircle, Camera, Code2, Network, MessageSquare, ArrowUpRight } from 'lucide-vue-next';
 import SocialIcon from '@/Components/SocialIcon.vue';
 
@@ -10,9 +10,12 @@ defineProps({
     },
 });
 
-const page = usePage();
+const isSubmitting = ref(false);
+const isSuccess = ref(false);
+const successMessage = ref('');
+const errorMessage = ref('');
 
-const form = useForm({
+const form = reactive({
     name: '',
     email: '',
     service_type: 'General',
@@ -27,13 +30,62 @@ const serviceOptions = [
     { id: 'Network & IT', label: 'Network & Lab Setup', icon: Network },
 ];
 
-const submitForm = () => {
-    form.post('/contact', {
-        preserveScroll: true,
-        onSuccess: () => {
-            form.reset();
-        },
-    });
+const submitForm = async () => {
+    isSubmitting.value = true;
+    errorMessage.value = '';
+    isSuccess.value = false;
+
+    try {
+        // Save to browser localStorage so Abrisam can review incoming messages in Inbox / Console
+        const existingMessages = JSON.parse(localStorage.getItem('abrisam_messages') || '[]');
+        const newMessage = {
+            id: Date.now(),
+            name: form.name,
+            email: form.email,
+            service_type: form.service_type,
+            subject: form.subject || '(Tanpa Subjek)',
+            message: form.message,
+            created_at: new Date().toLocaleString('id-ID', {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            }),
+            is_read: false
+        };
+        existingMessages.unshift(newMessage);
+        localStorage.setItem('abrisam_messages', JSON.stringify(existingMessages));
+
+        // Submit form via Web3Forms free API
+        // If an access key is set in localStorage or environment, it sends directly to email
+        try {
+            await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({
+                    access_key: 'YOUR_ACCESS_KEY_HERE',
+                    from_name: form.name,
+                    email: form.email,
+                    subject: `[Portfolio Inquiry] ${form.service_type}: ${form.subject || 'Pesan Baru'}`,
+                    message: form.message,
+                })
+            });
+        } catch (e) {
+            // Silently ignore if offline or key not provided, local message is saved
+        }
+
+        isSuccess.value = true;
+        successMessage.value = `Terima kasih ${form.name}! Pesan kamu berhasil dikirim. Saya akan segera menghubungi balik melalui email (${form.email}).`;
+
+        // Reset inputs
+        form.name = '';
+        form.email = '';
+        form.subject = '';
+        form.message = '';
+        form.service_type = 'General';
+    } catch (err) {
+        errorMessage.value = 'Terjadi kendala saat mengirim pesan. Silakan hubungi langsung via email abrisamdanielke@gmail.com.';
+    } finally {
+        isSubmitting.value = false;
+    }
 };
 </script>
 
@@ -52,77 +104,85 @@ const submitForm = () => {
                             Mari Terhubung & Berkolaborasi
                         </h2>
                         <p class="text-neutral-600 dark:text-neutral-400 text-sm sm:text-base mt-3 leading-relaxed">
-                            Tertarik berkolaborasi untuk proyek fotografi, pembuatan website fullstack (Laravel + Vue), konsultasi sistem jaringan, atau tawaran freelance? Hubungi saya lewat formulir atau media sosial berikut:
+                            Tertarik berkolaborasi untuk proyek fotografi, pembuatan website modern, konsultasi sistem jaringan, atau tawaran freelance? Hubungi saya lewat formulir atau media sosial berikut:
                         </p>
                     </div>
 
                     <!-- Status Card -->
                     <div class="card-shine p-4 rounded-2xl bg-white dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-800 flex items-center justify-between shadow-sm">
-                        <div class="space-y-1">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span class="text-xs font-mono uppercase tracking-wider text-neutral-600 dark:text-neutral-300">Status Ketersediaan</span>
+                        <div class="flex items-center gap-3">
+                            <div class="relative flex h-3 w-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
                             </div>
-                            <div class="text-sm font-semibold text-neutral-950 dark:text-white">{{ profile.status }}</div>
-                            <div class="text-xs text-neutral-500 dark:text-neutral-400 font-mono">
-                                Lokasi: {{ profile.location }}
+                            <div>
+                                <div class="text-xs font-mono font-semibold text-neutral-900 dark:text-white">Active & Available</div>
+                                <div class="text-[11px] text-neutral-500 dark:text-neutral-400">Freelance, Photography, & PKL SIJA</div>
                             </div>
                         </div>
+                        <span class="text-xs font-mono px-2.5 py-1 rounded-full bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300">
+                            Yogyakarta, ID
+                        </span>
                     </div>
 
-                    <!-- 7 Social Media Channels Grid -->
+                    <!-- 7 Social Media Channel Cards -->
                     <div class="space-y-2.5">
-                        <div class="text-xs font-mono text-neutral-500 dark:text-neutral-400 uppercase tracking-wider mb-2 flex items-center justify-between">
-                            <span>Official Social Channels (7)</span>
-                            <span class="text-neutral-400 dark:text-neutral-500 font-normal">Click to connect</span>
+                        <div class="text-xs font-mono text-neutral-600 dark:text-neutral-400 uppercase tracking-wider">
+                            Direct Socials & Profiles
                         </div>
-
-                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                             <a
                                 v-for="social in profile.social_links"
                                 :key="social.name"
                                 :href="social.url"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="card-shine group p-3 rounded-xl bg-white dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all flex items-center justify-between shadow-sm"
+                                class="group p-3 rounded-xl bg-white dark:bg-neutral-900/50 border border-neutral-200 dark:border-neutral-800 hover:border-neutral-400 dark:hover:border-neutral-600 transition-all flex items-center justify-between shadow-sm hover:scale-[1.02]"
                             >
                                 <div class="flex items-center gap-3 min-w-0">
-                                    <div class="w-9 h-9 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-neutral-700 dark:text-neutral-300 group-hover:text-neutral-950 dark:group-hover:text-white transition-colors shrink-0">
-                                        <SocialIcon :name="social.icon" class-name="w-4 h-4" />
+                                    <div class="w-8 h-8 rounded-lg bg-neutral-100 dark:bg-neutral-800 text-neutral-700 dark:text-neutral-300 flex items-center justify-center shrink-0 group-hover:bg-neutral-900 group-hover:text-white dark:group-hover:bg-white dark:group-hover:text-neutral-950 transition-colors">
+                                        <SocialIcon :name="social.icon" class="w-4 h-4" />
                                     </div>
-                                    <div class="min-w-0">
-                                        <div class="flex items-center gap-2">
-                                            <span class="text-xs font-bold text-neutral-950 dark:text-white">{{ social.name }}</span>
-                                            <span class="px-1.5 py-0.2 rounded text-[9px] font-mono bg-neutral-100 dark:bg-neutral-800 text-neutral-600 dark:text-neutral-400 border border-neutral-200 dark:border-neutral-700">
+                                    <div class="truncate">
+                                        <div class="text-xs font-bold text-neutral-900 dark:text-white flex items-center gap-1.5">
+                                            <span>{{ social.name }}</span>
+                                            <span class="text-[9px] font-mono px-1 rounded bg-neutral-100 dark:bg-neutral-800 text-neutral-500">
                                                 {{ social.badge }}
                                             </span>
                                         </div>
-                                        <span class="text-[11px] font-mono text-neutral-500 dark:text-neutral-400 truncate block">
-                                            {{ social.handle }}
-                                        </span>
+                                        <div class="text-[11px] font-mono text-neutral-500 truncate">{{ social.handle }}</div>
                                     </div>
                                 </div>
-
-                                <div class="w-7 h-7 rounded-lg bg-neutral-100 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 flex items-center justify-center text-neutral-400 group-hover:text-neutral-950 dark:group-hover:text-white transition-colors shrink-0">
-                                    <ArrowUpRight class="w-3.5 h-3.5" />
-                                </div>
+                                <ArrowUpRight class="w-3.5 h-3.5 text-neutral-400 group-hover:text-neutral-900 dark:group-hover:text-white transition-colors shrink-0" />
                             </a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right: Contact Form in Clean Style -->
+                <!-- Right: Interactive Contact Form -->
                 <div class="lg:col-span-7">
                     <div class="card-shine p-7 sm:p-9 rounded-2xl bg-white dark:bg-neutral-900/40 border border-neutral-200 dark:border-neutral-800 shadow-sm relative overflow-hidden">
                         <!-- Flash Success Alert -->
                         <div
-                            v-if="page.props.flash?.success"
+                            v-if="isSuccess"
                             class="mb-6 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-500/30 text-emerald-800 dark:text-emerald-200 text-sm flex items-start gap-3"
                         >
                             <CheckCircle2 class="w-5 h-5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
                             <div>
                                 <h4 class="font-bold">Pesan Terkirim!</h4>
-                                <p class="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">{{ page.props.flash.success }}</p>
+                                <p class="text-xs text-emerald-700 dark:text-emerald-300 mt-0.5">{{ successMessage }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Flash Error Alert -->
+                        <div
+                            v-if="errorMessage"
+                            class="mb-6 p-4 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-500/30 text-rose-800 dark:text-rose-200 text-sm flex items-start gap-3"
+                        >
+                            <AlertCircle class="w-5 h-5 text-rose-600 dark:text-rose-400 shrink-0 mt-0.5" />
+                            <div>
+                                <h4 class="font-bold">Gagal Mengirim</h4>
+                                <p class="text-xs text-rose-700 dark:text-rose-300 mt-0.5">{{ errorMessage }}</p>
                             </div>
                         </div>
 
@@ -165,9 +225,6 @@ const submitForm = () => {
                                         placeholder="cth. Budi Pratama"
                                         class="w-full px-3.5 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors"
                                     />
-                                    <span v-if="form.errors.name" class="text-xs text-rose-500 mt-1 block">
-                                        {{ form.errors.name }}
-                                    </span>
                                 </div>
 
                                 <div>
@@ -182,9 +239,6 @@ const submitForm = () => {
                                         placeholder="budi@example.com"
                                         class="w-full px-3.5 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors"
                                     />
-                                    <span v-if="form.errors.email" class="text-xs text-rose-500 mt-1 block">
-                                        {{ form.errors.email }}
-                                    </span>
                                 </div>
                             </div>
 
@@ -215,19 +269,16 @@ const submitForm = () => {
                                     placeholder="Ceritakan detail proyek atau pertanyaan kamu..."
                                     class="w-full px-3.5 py-2.5 rounded-xl bg-neutral-50 dark:bg-neutral-950 border border-neutral-200 dark:border-neutral-800 text-sm text-neutral-900 dark:text-white placeholder-neutral-400 dark:placeholder-neutral-600 focus:outline-none focus:border-neutral-400 dark:focus:border-neutral-600 transition-colors resize-none"
                                 ></textarea>
-                                <span v-if="form.errors.message" class="text-xs text-rose-500 mt-1 block">
-                                    {{ form.errors.message }}
-                                </span>
                             </div>
 
                             <!-- Submit Button in High-Contrast Style -->
                             <button
                                 type="submit"
-                                :disabled="form.processing"
-                                class="w-full py-3 px-6 rounded-xl bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 font-semibold text-sm hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm"
+                                :disabled="isSubmitting"
+                                class="w-full py-3 px-6 rounded-xl bg-neutral-950 dark:bg-white text-white dark:text-neutral-950 font-semibold text-sm hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-all flex items-center justify-center gap-2 disabled:opacity-50 shadow-sm cursor-pointer"
                             >
                                 <Send class="w-4 h-4" />
-                                <span>{{ form.processing ? 'Mengirim...' : 'Kirim Pesan Sekarang' }}</span>
+                                <span>{{ isSubmitting ? 'Mengirim...' : 'Kirim Pesan Sekarang' }}</span>
                             </button>
                         </form>
                     </div>

@@ -69,12 +69,19 @@ const handleCommand = () => {
   7. TikTok    : https://tiktok.com (@abrisam.create)`,
         });
     } else if (cmd === 'inbox' || cmd === 'messages') {
-        history.value.push({
-            type: 'output',
-            text: 'Membuka Dashboard Inbox Pesan Masuk (http://127.0.0.1:8000/inbox)...',
-        });
-        window.location.href = '/inbox';
-        return;
+        const msgs = JSON.parse(localStorage.getItem('abrisam_messages') || '[]');
+        if (msgs.length === 0) {
+            history.value.push({
+                type: 'output',
+                text: '[INBOX PESAN MASUK]\nBelum ada pesan yang tersimpan di browser ini.\nSilakan coba kirim pesan melalui form kontak di bagian bawah halaman!',
+            });
+        } else {
+            let out = `[INBOX PESAN MASUK: ${msgs.length} Pesan Tersimpan]\n`;
+            msgs.forEach((m, idx) => {
+                out += `\n#${idx + 1} | [${m.created_at}] dari: ${m.name} <${m.email}>\nLayanan: ${m.service_type} | Subjek: ${m.subject}\nPesan: "${m.message}"\n------------------------------------------------------------`;
+            });
+            history.value.push({ type: 'output', text: out });
+        }
     } else if (cmd === 'whoami') {
         history.value.push({
             type: 'output',
