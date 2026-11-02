@@ -55,21 +55,26 @@ const submitForm = async () => {
         localStorage.setItem('abrisam_messages', JSON.stringify(existingMessages));
 
         // Submit form via Web3Forms free API
-        // If an access key is set in localStorage or environment, it sends directly to email
+        // Sends directly to abrisameshan@gmail.com
         try {
-            await fetch('https://api.web3forms.com/submit', {
+            const response = await fetch('https://api.web3forms.com/submit', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                 body: JSON.stringify({
-                    access_key: 'YOUR_ACCESS_KEY_HERE',
+                    access_key: '23f9dbe9-fda8-448b-b942-0441e0352835',
                     from_name: form.name,
                     email: form.email,
+                    service_type: form.service_type,
                     subject: `[Portfolio Inquiry] ${form.service_type}: ${form.subject || 'Pesan Baru'}`,
                     message: form.message,
                 })
             });
+            const result = await response.json();
+            if (!result.success) {
+                console.warn('Web3Forms response:', result);
+            }
         } catch (e) {
-            // Silently ignore if offline or key not provided, local message is saved
+            console.warn('Failed to reach Web3Forms endpoint:', e);
         }
 
         isSuccess.value = true;
