@@ -59,10 +59,6 @@ const navItems = [
                         <span class="font-bold tracking-tight text-neutral-900 dark:text-white text-xs sm:text-sm font-sans">
                             {{ profile.short_name || profile.name }}
                         </span>
-                        <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-neutral-100 dark:bg-neutral-800/80 border border-neutral-200 dark:border-neutral-700/60 text-[10px] font-mono text-neutral-600 dark:text-neutral-300">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            SIJA
-                        </span>
                     </div>
                 </a>
 
