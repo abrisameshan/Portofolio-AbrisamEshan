@@ -60,13 +60,13 @@ const handleCommand = () => {
         history.value.push({
             type: 'output',
             text: `[OFFICIAL CHANNELS & SOCIAL MEDIA]
-  1. Gmail     : abrisam.sija@gmail.com
+  1. Gmail     : abrisameshan@gmail.com
   2. GitHub    : https://github.com
   3. LinkedIn  : https://linkedin.com
-  4. YouTube   : https://youtube.com (@AbrisamTechVisual)
-  5. Instagram : https://instagram.com (@abrisam.shots)
-  6. Discord   : https://discord.com (abrisam#sija)
-  7. TikTok    : https://tiktok.com (@abrisam.create)`,
+  4. YouTube   : https://youtube.com (@AbrisamDaniel)
+  5. Instagram : https://instagram.com (@abrisam.daniel)
+  6. Discord   : https://discord.com (abrisam#60d)
+  7. TikTok    : https://tiktok.com (@abrisam.daniel)`,
         });
     } else if (cmd === 'inbox' || cmd === 'messages') {
         const msgs = JSON.parse(localStorage.getItem('abrisam_messages') || '[]');

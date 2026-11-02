@@ -10,7 +10,7 @@ export const profile = {
     status: 'Siswa SIJA (17 thn) • Available for freelance & PKL/Magang',
     location: 'Sleman, D.I. Yogyakarta',
     socials: {
-        email: 'abrisamdanielke@gmail.com',
+        email: 'abrisameshan@gmail.com',
         github: 'https://github.com',
         linkedin: 'https://linkedin.com',
         youtube: 'https://youtube.com',
@@ -21,8 +21,8 @@ export const profile = {
     social_links: [
         {
             name: 'Gmail',
-            handle: 'abrisamdanielke@gmail.com',
-            url: 'mailto:abrisamdanielke@gmail.com',
+            handle: 'abrisameshan@gmail.com',
+            url: 'mailto:abrisameshan@gmail.com',
             icon: 'gmail',
             desc: 'Inquiry proyek, freelance & tawaran PKL',
             badge: 'Primary',

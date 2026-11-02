@@ -82,7 +82,7 @@ const submitForm = async () => {
         form.message = '';
         form.service_type = 'General';
     } catch (err) {
-        errorMessage.value = 'Terjadi kendala saat mengirim pesan. Silakan hubungi langsung via email abrisamdanielke@gmail.com.';
+        errorMessage.value = 'Terjadi kendala saat mengirim pesan. Silakan hubungi langsung via email abrisameshan@gmail.com.';
     } finally {
         isSubmitting.value = false;
     }
