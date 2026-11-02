@@ -1,6 +1,7 @@
 export const profile = {
     name: 'Abrisam Daniel Kuncoro Eshan',
-    short_name: 'Abrisam Daniel',
+    short_name: 'Abrisam Daniel Kuncoro Eshan',
+    avatar: '/images/avatar.jpg',
     age: 17,
     camera: 'Canon EOS 60D',
     handle: '@abrisam.daniel',

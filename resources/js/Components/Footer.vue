@@ -22,9 +22,11 @@ const scrollToTop = () => {
             <div class="flex flex-col md:flex-row items-center justify-between gap-6">
                 <!-- Branding -->
                 <div class="flex items-center gap-3 text-center md:text-left">
-                    <div class="w-8 h-8 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-neutral-950 flex items-center justify-center font-mono text-xs font-bold shadow-sm">
-                        AD
-                    </div>
+                    <img
+                        src="/images/avatar.jpg"
+                        alt="Abrisam Daniel Kuncoro Eshan"
+                        class="w-9 h-9 rounded-full object-cover object-top ring-1 ring-neutral-300 dark:ring-neutral-700 shadow-sm shrink-0"
+                    />
                     <div>
                         <div class="text-sm font-bold text-neutral-900 dark:text-white flex items-center gap-2">
                             {{ profile.name }}

@@ -50,14 +50,16 @@ const navItems = [
                         : 'bg-white/40 dark:bg-[#0c0c0e]/40 backdrop-blur-md border border-neutral-200/60 dark:border-neutral-800/50'
                 ]"
             >
-                <!-- Brand / Monogram in Ultra-Clean Style -->
+                <!-- Brand / Avatar & Full Name in Ultra-Clean Style -->
                 <a href="#top" class="group flex items-center gap-2.5">
-                    <div class="w-7 h-7 rounded-full bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-950 flex items-center justify-center font-mono text-[11px] font-bold tracking-wider group-hover:scale-105 transition-transform">
-                        AD
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <span class="font-bold tracking-tight text-neutral-900 dark:text-white text-xs sm:text-sm font-sans">
-                            {{ profile.short_name || profile.name }}
+                    <img
+                        src="/images/avatar.jpg"
+                        alt="Abrisam Daniel Kuncoro Eshan"
+                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover object-top ring-1 ring-neutral-300 dark:ring-neutral-700 group-hover:scale-105 group-hover:ring-neutral-900 dark:group-hover:ring-white transition-all shadow-sm shrink-0"
+                    />
+                    <div class="flex items-center gap-2 min-w-0">
+                        <span class="font-bold tracking-tight text-neutral-900 dark:text-white text-xs sm:text-sm font-sans truncate">
+                            Abrisam Daniel Kuncoro Eshan
                         </span>
                     </div>
                 </a>
