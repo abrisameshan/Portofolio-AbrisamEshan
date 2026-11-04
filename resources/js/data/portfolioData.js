@@ -1,10 +1,12 @@
 export const profile = {
     name: 'Abrisam Daniel Kuncoro Eshan',
     short_name: 'Abrisam Daniel Kuncoro Eshan',
-    avatar: '/images/avatar.jpg',
+    avatar: '/images/logo.jpg',
+    logo: '/images/logo.jpg',
+    brand: 'Haans.ID',
     age: 17,
     camera: 'Canon EOS 60D',
-    handle: '@abrisam.daniel',
+    handle: '@abrisameshan',
     role: '17 y.o. • SIJA Student • Web Developer & Photographer',
     school: 'SMK Negeri 2 Depok Sleman (SIJA)',
     bio: 'Halo! Saya Abrisam Daniel Kuncoro Eshan (17 tahun), siswa jurusan SIJA (Sistem Informasi, Jaringan, dan Aplikasi) di SMK Negeri 2 Depok Sleman. Mengombinasikan fotografi visual lewat kamera Canon EOS 60D dengan rekayasa aplikasi web modern (Laravel + Vue), manajemen server Linux, dan fondasi keamanan jaringan.',
@@ -80,7 +82,7 @@ export const profile = {
     stats: [
         { label: 'Age & School', value: '17 yo · SIJA' },
         { label: 'Primary Gear', value: 'Canon 60D' },
-        { label: 'Web & App Projects', value: '12+' },
+        { label: 'Web & App Projects', value: '3+' },
         { label: 'Photos Captured', value: '3000+' },
     ]
 };

@@ -23,9 +23,9 @@ const scrollToTop = () => {
                 <!-- Branding -->
                 <div class="flex items-center gap-3 text-center md:text-left">
                     <img
-                        src="/images/avatar.jpg"
-                        alt="Abrisam Daniel Kuncoro Eshan"
-                        class="w-9 h-9 rounded-full object-cover object-top ring-1 ring-neutral-300 dark:ring-neutral-700 shadow-sm shrink-0"
+                        src="/images/logo.jpg"
+                        alt="Haans.ID"
+                        class="w-9 h-9 rounded-full object-cover bg-white ring-1 ring-neutral-200 dark:ring-neutral-700 shadow-sm shrink-0"
                     />
                     <div>
                         <div class="text-sm font-bold text-neutral-900 dark:text-white flex items-center gap-2">

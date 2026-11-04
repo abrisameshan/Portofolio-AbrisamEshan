@@ -53,9 +53,9 @@ const navItems = [
                 <!-- Brand / Avatar & Full Name in Ultra-Clean Style -->
                 <a href="#top" class="group flex items-center gap-2.5">
                     <img
-                        src="/images/avatar.jpg"
-                        alt="Abrisam Daniel Kuncoro Eshan"
-                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover object-top ring-1 ring-neutral-300 dark:ring-neutral-700 group-hover:scale-105 group-hover:ring-neutral-900 dark:group-hover:ring-white transition-all shadow-sm shrink-0"
+                        src="/images/logo.jpg"
+                        alt="Haans.ID"
+                        class="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover bg-white ring-1 ring-neutral-200 dark:ring-neutral-700 group-hover:scale-105 group-hover:ring-neutral-900 dark:group-hover:ring-white transition-all shadow-sm shrink-0"
                     />
                     <div class="flex items-center gap-2 min-w-0">
                         <span class="font-bold tracking-tight text-neutral-900 dark:text-white text-xs sm:text-sm font-sans truncate">
